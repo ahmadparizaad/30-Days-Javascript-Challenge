@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive To-Do List</title>
+    <style>
+        .task {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+        }
+        .task:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ahmad's To-Do App</h1>
+    <form id="task-form">
+        <input type="text" id="task-input" placeholder="Enter a new task">
+        <button type="submit">Add Task</button>
+    </form>
+    <p id="status">Add a new task above</p>
+    <select id="filter-tasks">
+        <option value="all">All</option>
+        <option value="done">Done</option>
+        <option value="not-done">Not Done</option>
+    </select>
+    <ul id="task-list"></ul>
+
+    <script>
+        const taskForm = document.getElementById('task-form');
+        const taskInput = document.getElementById('task-input');
+        const taskList = document.getElementById('task-list');
+        const status = document.getElementById('status');
+        const filterTasks = document.getElementById('filter-tasks');
+
+        // Add task using form submission
+        taskForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const taskText = taskInput.value;
+            if (taskText) {
+                addTask(taskText);
+                status.textContent = 'Task added!';
+                taskInput.value = '';
+            } else {
+                status.textContent = 'Please enter a task.';
+            }
+        });
+
+        // Add task function
+        function addTask(taskText) {
+            const li = document.createElement('li');
+            li.className = 'task';
+            li.textContent = taskText;
+            taskList.appendChild(li);
+        }
+
+        // Event delegation for tasks
+        taskList.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('task')) {
+                const task = event.target;
+                task.classList.toggle('done');
+                task.style.textDecoration = task.classList.contains('done') ? 'line-through' : 'none';
+                status.textContent = 'Task status changed!';
+            }
+        });
+
+        // Mouse events for tasks
+        taskList.addEventListener('mouseover', function(event) {
+            if (event.target && event.target.classList.contains('task')) {
+                event.target.style.backgroundColor = '#e0e0e0';
+            }
+        });
+
+        taskList.addEventListener('mouseout', function(event) {
+            if (event.target && event.target.classList.contains('task')) {
+                event.target.style.backgroundColor = '';
+            }
+        });
+
+        // Keyboard events for task input
+        taskInput.addEventListener('keydown', function(event) {
+            console.log('Key pressed:', event.key);
+            status.textContent = `Typing: ${taskInput.value}`;
+        });
+
+        taskInput.addEventListener('keyup', function(event) {
+            status.textContent = `Typed: ${taskInput.value}`;
+        });
+
+        // Change event for task filter
+        filterTasks.addEventListener('change', function(event) {
+            const filter = event.target.value;
+            const tasks = taskList.getElementsByClassName('task');
+            for (let task of tasks) {
+                switch (filter) {
+                    case 'done':
+                        task.style.display = task.classList.contains('done') ? 'list-item' : 'none';
+                        break;
+                    case 'not-done':
+                        task.style.display = task.classList.contains('done') ? 'none' : 'list-item';
+                        break;
+                    default:
+                        task.style.display = 'list-item';
+                        break;
+                }
+            }
+            status.textContent = `Filter applied: ${filter}`;
+        });
+    </script>
+</body>
+</html>
